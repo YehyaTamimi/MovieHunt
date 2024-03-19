@@ -1,5 +1,23 @@
+
+//on load functionality
 document.addEventListener("DOMContentLoaded", () => {
-    const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=true&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
+    RequestMovies();
+    let search = document.querySelector(".search");
+    search.addEventListener("click", searchMovies)
+});
+
+
+//api request for a list of movies
+const RequestMovies = (query="") => {
+
+    let url;
+    if (query === ""){
+         url = 'https://api.themoviedb.org/3/discover/movie?include_adult=true&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
+    }else{
+         url = `https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=true&language=en-US&page=1`;
+    }
+
+
     const options = {
         method: 'GET',
         headers: {
@@ -11,20 +29,18 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch(url, options)
         .then(response => {
             if (response.ok) {
-                console.log("cool");
                 return response.json();
             }
             return new Error("Error loading movies");
         })
         .then(getMovies)
         .catch(err => console.error('error:' + err));
-});
+}
 
-
-const getMovies = (json) =>{
+//get movies information in the retrieved list from the API
+const getMovies = (json) => {
     let movies = json["results"];
-    console.log(movies);
-
+    
     movies.forEach(movie => {
         let title = movie["original_title"];
         let imagePath = movie["poster_path"];
@@ -32,10 +48,34 @@ const getMovies = (json) =>{
     });
 }
 
-const DisplayPoster = (path,title) => {
+//display each movie on the screen
+const DisplayPoster = (path, title) => {
     let container = document.querySelector(".carousel");
     let img = document.createElement("img");
     img.src = `https://image.tmdb.org/t/p/w500${path}`;
     img.alt = title;
     container.appendChild(img);
+}
+
+//search for a movie with a query
+const searchMovies = ()=>{
+    let input = document.querySelector(".input");
+    let query = input.value.trim();
+    let movies = document.querySelector(".movies");
+    let p = document.querySelector(".movies p");
+    let container = document.querySelector(".carousel");
+
+    if(query === ""){
+        movies.scrollIntoView({ behavior: 'smooth'});
+        return;
+    }
+
+    container.replaceChildren();
+    RequestMovies(query);
+
+    p.textContent = `Showing search Results for: ${query}`;
+    
+    setTimeout(function() {
+        movies.scrollIntoView({ behavior: 'smooth'});
+    }, 500);
 }
