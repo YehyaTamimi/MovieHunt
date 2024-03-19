@@ -75,14 +75,13 @@ main p{
 .movies{
     background-color: black;
     padding: 40px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 .movies p{
     margin-bottom: 45px;
 }
-.carousel-container {
-    position: relative;
-  }
+
   
   /* .carousel {
     height: 250px;
@@ -123,6 +122,12 @@ main p{
     background-color: white;
     object-fit: cover;
     margin-bottom: 30px;
+    transition: 0.3s ease;
+  }
+
+  .carousel img:hover{
+    scale: 1.07;
+    cursor: pointer;
   }
   
   .prev-btn,
