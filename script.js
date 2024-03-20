@@ -1,9 +1,26 @@
+let searchArr = [];
 
 //on load functionality
 document.addEventListener("DOMContentLoaded", () => {
+    if(localStorage.getItem('history') !== null){
+        searchArr = JSON.parse(localStorage.getItem('history'));
+    }
+
     RequestMovies();
+
     let search = document.querySelector(".search");
-    search.addEventListener("click", searchMovies)
+    search.addEventListener("click", () => {
+        let query = document.querySelector(".input").value.trim();
+        searchMovies(query, false)});
+
+    let input = document.querySelector(".input");
+    input.addEventListener("click", viewSearchHistory);
+
+    document.addEventListener('click', (e) => {
+        if(!e.target.closest('.input')){
+            clearSearch();
+        }
+    });
 });
 
 
@@ -12,9 +29,9 @@ const RequestMovies = (query="") => {
 
     let url;
     if (query === ""){
-         url = 'https://api.themoviedb.org/3/discover/movie?include_adult=true&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
+         url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
     }else{
-         url = `https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=true&language=en-US&page=1`;
+         url = `https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&language=en-US&page=1`;
     }
 
 
@@ -58,9 +75,7 @@ const DisplayPoster = (path, title) => {
 }
 
 //search for a movie with a query
-const searchMovies = ()=>{
-    let input = document.querySelector(".input");
-    let query = input.value.trim();
+const searchMovies = (query, isHistory)=>{
     let movies = document.querySelector(".movies");
     let p = document.querySelector(".movies p");
     let container = document.querySelector(".carousel");
@@ -75,7 +90,80 @@ const searchMovies = ()=>{
 
     p.textContent = `Showing search Results for: ${query}`;
     
-    setTimeout(function() {
+    setTimeout(() => {
         movies.scrollIntoView({ behavior: 'smooth'});
-    }, 500);
+    }, 800);
+
+    if(isHistory === false){
+        addToSearchHistory(query);
+    }
+
+    clearSearch();
+    
 }
+
+//add a search query to the search history
+const addToSearchHistory = (query)=>{
+
+    if(!searchArr.includes(query)){
+        if(searchArr.length === 5){
+            searchArr.pop();
+            searchArr.unshift(query);
+        }else{
+            searchArr.unshift(query);
+        }
+    }
+
+    localStorage.setItem("history", JSON.stringify(searchArr));
+}
+
+//clear input and hide search history
+const clearSearch = () =>{
+    let input = document.querySelector(".input");
+    let header = document.querySelector("header");
+    let child = header.lastElementChild;
+
+    setTimeout(()=> {
+        input.value = "";
+    }, 700);
+
+    if(child.tagName === "DIV"){
+        header.removeChild(child);
+    }
+
+}
+
+//create and show the search history
+const viewSearchHistory = () => {
+    if(searchArr.length === 0){
+        return;
+    }
+
+    let header = document.querySelector("header");
+    let child = header.lastElementChild;
+    console.log(child);
+    
+    if(child.tagName === "DIV"){
+        return;
+    }
+
+    let div = document.createElement("div");
+    div.classList.add("history");
+
+    for(query of searchArr){
+        let p = document.createElement("p");
+        let i = document.createElement("i");
+        i.classList.add("fa-solid" ,"fa-clock-rotate-left");
+        p.appendChild(i);
+        p.appendChild(document.createTextNode(query));
+        p.addEventListener('click', ()=> {
+            let query = p.lastChild.nodeValue;
+            searchMovies(query, true);
+        });
+        div.appendChild(p);
+    }
+
+    header.appendChild(div);
+
+}
+
