@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
 * {
+
   margin: 0;
   padding: 0;
   border: none;
@@ -14,10 +15,10 @@ body {
   display: flex;
   flex-direction: column;
   background-color: #272728;
-
 }
 
 header {
+
   position: relative;
   background-color: black;
   display: flex;
@@ -106,10 +107,12 @@ main p {
 .carousel img:hover {
   scale: 1.07;
   cursor: pointer;
+
 }
 
 .prev-btn,
 .next-btn {
+
   position: absolute;
   height: 100%;
   width: 45px;
@@ -127,6 +130,7 @@ main p {
 
 .prev-btn:hover,
 .next-btn:hover {
+
 
   scale: 1.3;
 }
