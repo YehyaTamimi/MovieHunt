@@ -76,11 +76,13 @@ main p {
 .movies {
     background-color: black;
     padding: 40px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 .movies p {
     margin-bottom: 45px;
 }
+
 
 
 .carousel {
@@ -107,6 +109,7 @@ main p {
 
 .prev-btn,
 .next-btn {
+
     position: absolute;
     height: 100%;
     width: 45px;
