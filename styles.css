@@ -86,38 +86,13 @@ main p{
 }
 
   
-  /* .carousel {
-    height: 250px;
-    width: auto;
-    overflow: scroll;
-    white-space: nowrap;
-    display: inline-block;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    padding-left: 5%;
-    padding-right: 5%;
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    gap: 8px;
-  } */
-
   .carousel{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
   }
   
-  /* .carousel div{
-    height: 100%;
-    width: auto;
-    border: 1px solid white;
-    padding: 10px;
-    background-color: white;
-    border-radius: 10px;
-  } */
-  
+
   .carousel img {
     height:400px;
     width: 300px;
