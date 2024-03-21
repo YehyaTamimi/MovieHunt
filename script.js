@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     RequestMovies();
 
     let search = document.querySelector(".search");
+
     search.addEventListener("click", () => {
         let query = document.querySelector(".input").value.trim();
         searchMovies(query, false)});
@@ -19,21 +20,40 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener('click', (e) => {
         if(!e.target.closest('.input')){
             clearSearch();
+
+    search.addEventListener("click", searchMovies)
+
+    let input = document.querySelector(".input");
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            search.click();
+
         }
     });
 });
 
 
 //api request for a list of movies
-const RequestMovies = (query="") => {
+const RequestMovies = (query = "") => {
+
+    const params = {
+        include_adult: false,
+        language: 'en-US',
+        page: 1,
+        sort_by: "popularity.desc"
+      };
 
     let url;
-    if (query === ""){
-         url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
-    }else{
-         url = `https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&language=en-US&page=1`;
+    if (query === "") {
+        url = 'https://api.themoviedb.org/3/discover/movie';
+    } else {
+        url = `https://api.themoviedb.org/3/search/movie`;
+        params.query = query;
+        delete params.sort_by;
     }
 
+    const queryString = new URLSearchParams(params).toString();
+    url = `${url}?${queryString}`;
 
     const options = {
         method: 'GET',
@@ -57,7 +77,7 @@ const RequestMovies = (query="") => {
 //get movies information in the retrieved list from the API
 const getMovies = (json) => {
     let movies = json["results"];
-    
+
     movies.forEach(movie => {
         let title = movie["original_title"];
         let imagePath = movie["poster_path"];
@@ -75,13 +95,14 @@ const DisplayPoster = (path, title) => {
 }
 
 //search for a movie with a query
+
 const searchMovies = (query, isHistory)=>{
     let movies = document.querySelector(".movies");
     let p = document.querySelector(".movies p");
     let container = document.querySelector(".carousel");
 
-    if(query === ""){
-        movies.scrollIntoView({ behavior: 'smooth'});
+    if (query === "") {
+        movies.scrollIntoView({ behavior: 'smooth' });
         return;
     }
 
@@ -89,6 +110,7 @@ const searchMovies = (query, isHistory)=>{
     RequestMovies(query);
 
     p.textContent = `Showing search Results for: ${query}`;
+
     
     setTimeout(() => {
         movies.scrollIntoView({ behavior: 'smooth'});
