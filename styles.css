@@ -25,10 +25,13 @@ header {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
-header a {
+header h1 {
     flex: 1;
-    color: #ffffff;
+}
+
+header h1 a {
     text-decoration: none;
+    color: #ffffff;
 }
 
 header input {
@@ -54,6 +57,7 @@ header button i {
 main {
     text-align: center;
     color: #ffffff;
+    transition: opacity 0.2s ease;
 }
 
 main h1 {
@@ -171,3 +175,84 @@ main p {
     margin-right: 10px;
 
   }
+
+.popup{
+    z-index: 9998;
+    position: fixed;
+    /* right: 20vw;
+    top: 25vh; */
+    top: 50%;
+    left: 50%; 
+    transform: translate(-50%, -50%); /* Translate the element by -50% of its width and height */
+    backdrop-filter: blur(20px); 
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    width: 60vw;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    color: white;
+    transition: opacity 0.3s ease;
+}
+
+.close{
+    align-self: flex-end;
+    padding: 10px 20px;
+    background: transparent;
+    color: white;
+    font-size: 1.2rem;
+    pointer-events: visiblePainted;
+}
+
+.close:hover{
+    color: white;
+    background-color: red;
+    cursor: pointer;
+}
+
+.movie-info{
+    display: flex;
+    padding: 20px;
+}
+
+.poster{
+    width: auto;
+    height: 420px;
+    background-color: white;
+    padding: 10px;
+}
+
+.details-container{
+    margin-left: 30px;
+    text-align: left;
+}
+
+.title{
+    font-weight: bold;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.genre, .date, .desc {
+    margin-bottom: 30px;
+}
+
+.genre b, .date b, .desc b, .home b{
+    font-size: 1.5rem;
+}
+
+.home a{
+    text-decoration: none;
+    color: lightblue;
+    pointer-events: visiblePainted;
+}
+
+.disabled {
+    pointer-events: none;
+}
+
+
+
+
+
+
+
