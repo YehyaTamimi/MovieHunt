@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
     RequestMovies();
 
     let search = document.querySelector(".search");
-
     search.addEventListener("click", () => {
         let query = document.querySelector(".input").value.trim();
         searchMovies(query, false)
@@ -17,45 +16,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let input = document.querySelector(".input");
     input.addEventListener("click", viewSearchHistory);
-
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.input')) {
-            clearSearch();
-
-    search.addEventListener("click", searchMovies)
-
-    let input = document.querySelector(".input");
     input.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             search.click();
 
         }
     });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.input')) {
+            closeHistory();
+        }
+    });
+
 });
 
 
-//api request for a list of movies
-const RequestMovies = (query = "") => {
+//api request for fetching movies
+const RequestMovies = (event, query = "") => {
+    let callback;
+    let id;
+    let url;
 
     const params = {
         include_adult: false,
         language: 'en-US',
         page: 1,
         sort_by: "popularity.desc"
-      };
+    };
 
-    let url;
-    if (query === "") {
-        url = 'https://api.themoviedb.org/3/discover/movie';
-    } else {
-        url = `https://api.themoviedb.org/3/search/movie`;
-        params.query = query;
-        delete params.sort_by;
 
+    try {
+        //fetch a movie based on its poster
+        id = event.target.classList.value;
+        callback = displayDetails;
+        url = `https://api.themoviedb.org/3/movie/${id}`;
+    } catch {
+        callback = getMovies;
+        if (query === "") {
+            //fetch a list of movies
+            url = 'https://api.themoviedb.org/3/discover/movie';
+        } else {
+            //fetch a movie based on a search query
+            url = `https://api.themoviedb.org/3/search/movie`;
+            params.query = query;
+            delete params.sort_by;
+
+        }
+
+        const queryString = new URLSearchParams(params).toString();
+        url = `${url}?${queryString}`;
     }
-
-    const queryString = new URLSearchParams(params).toString();
-    url = `${url}?${queryString}`;
 
     const options = {
         method: 'GET',
@@ -72,7 +83,7 @@ const RequestMovies = (query = "") => {
             }
             return new Error("Error loading movies");
         })
-        .then(getMovies)
+        .then(callback)
         .catch(err => console.error('error:' + err));
 }
 
@@ -88,19 +99,18 @@ const getMovies = (json) => {
     });
 }
 
-//display each movie on the screen
+//display a poster each movie on the screen
 const DisplayPoster = (path, title, id) => {
     let container = document.querySelector(".carousel");
     let img = document.createElement("img");
     img.src = `https://image.tmdb.org/t/p/w500${path}`;
     img.alt = title;
     img.classList.add(id);
-    img.addEventListener("click", fetchMovieDetails);
+    img.addEventListener("click", RequestMovies);
     container.appendChild(img);
 }
 
 //search for a movie with a query
-
 const searchMovies = (query, isHistory) => {
 
     let movies = document.querySelector(".movies");
@@ -113,7 +123,7 @@ const searchMovies = (query, isHistory) => {
     }
 
     container.replaceChildren();
-    RequestMovies(query);
+    RequestMovies({}, query);
 
     p.textContent = `Showing search Results for: ${query}`;
 
@@ -126,7 +136,7 @@ const searchMovies = (query, isHistory) => {
     }
 
     clearSearch();
-
+    closeHistory();
 }
 
 //add a search query to the search history
@@ -144,19 +154,23 @@ const addToSearchHistory = (query) => {
     localStorage.setItem("history", JSON.stringify(searchArr));
 }
 
-//clear input and hide search history
-const clearSearch = () => {
-    let input = document.querySelector(".input");
+// close search history
+const closeHistory = () => {
     let header = document.querySelector("header");
     let child = header.lastElementChild;
-
-    setTimeout(() => {
-        input.value = "";
-    }, 700);
 
     if (child.tagName === "DIV") {
         header.removeChild(child);
     }
+}
+
+//clear input
+const clearSearch = () => {
+    let input = document.querySelector(".input");
+
+    setTimeout(() => {
+        input.value = "";
+    }, 700);
 
 }
 
@@ -168,7 +182,6 @@ const viewSearchHistory = () => {
 
     let header = document.querySelector("header");
     let child = header.lastElementChild;
-    console.log(child);
 
     if (child.tagName === "DIV") {
         return;
@@ -194,37 +207,15 @@ const viewSearchHistory = () => {
 
 }
 
-const fetchMovieDetails = (event) => {
-    let id = event.target.classList.value;
-    console.log("test")
-    let url = `https://api.themoviedb.org/3/movie/${id}`
-    const options = {
-        method: 'GET',
-        headers: {
-            accept: 'application/json',
-            Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2OGVjNDhjOTAyMDM1MTkzYjEyZjU2YzUzZDFiNzhmMiIsInN1YiI6IjY1Zjk2Yjc4MjRiMzMzMDE4NDdhZDk4YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.pEtdMHNqCeAdF4Xk_R1u7dEzYA4afuTV1KPF2Y6roao'
-        }
-    };
-
-    fetch(url, options)
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            return new Error("Error loading movies");
-        })
-        .then(displayDetails)
-        .catch(err => console.error('error:' + err));
-}
-
+//display the details of a movie 
 const displayDetails = (json) => {
-    console.log(json);
     let title = json["original_title"];
     let poster = json["poster_path"];
-    let genres = [];
+    let genres = "";
     for (genre of json["genres"]) {
-        genres.push(genre["name"]);
+        genres += `${genre["name"]}, `
     }
+
     let homepage = json["homepage"];
     let desc = json["overview"];
     let date = json["release_date"].split("-")[0];
@@ -235,21 +226,24 @@ const displayDetails = (json) => {
     disableBackground();
 }
 
+//set the opacity of the background
 const setElementOpacity = (opacity) => {
     let main = document.querySelector("main");
     main.style.opacity = opacity;
 }
 
+//disable the background events
 const disableBackground = () => {
     document.body.classList.add('disabled');
-    document.body.style.overflow = 'hidden';
+
 }
 
+//enable the background events
 const enableBackground = () => {
     document.body.classList.remove('disabled');
-    document.body.style.overflow = 'auto';
 }
 
+//create the popup for the movie details
 const createPopUp = (title, poster, genres, homepage, desc, date) => {
     let movies = document.querySelector("body");
     let main = document.querySelector("main");
@@ -297,7 +291,7 @@ const createPopUp = (title, poster, genres, homepage, desc, date) => {
     // Create genre
     const genreDiv = document.createElement('div');
     genreDiv.classList.add('genre');
-    genreDiv.innerHTML = `<b>Genres</b> <br>${genres}`;
+    genreDiv.innerHTML = `<b>Genres</b> <br> <p class=genre-list>${genres}</p>`;
     detailsContainerDiv.appendChild(genreDiv);
 
     // Create release date
