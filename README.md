@@ -20,10 +20,14 @@ a live version of the project can be accessed [here.](https://yehyatamimi.github
 # Instruction to Run the Project locally
 
 #### clone the project
-`git clone https://github.com/YehyaTamimi/MovieHunt.git`
+```
+git clone https://github.com/YehyaTamimi/MovieHunt.git
+```
 
 #### navigate to the project directory 
-`cd MovieHunt`
+```
+cd MovieHunt
+```
 
 #### view the project using a local server
 
