@@ -2,6 +2,7 @@ let searchArr = [];
 
 //on load functionality
 document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector("body").addEventListener('resize', adjustScreenWidth);
     if (localStorage.getItem('history') !== null) {
         searchArr = JSON.parse(localStorage.getItem('history'));
     }
@@ -31,6 +32,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+//adjust the website width based on it current Screen width
+function adjustScreenWidth() {
+    let windowWidth = window.innerWidth;
+    let body = document.querySelector("body");
+    body.style.width = windowWidth + "px";
+}
 
 //api request for fetching movies
 const RequestMovies = (event, query = "") => {
