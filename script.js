@@ -33,10 +33,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 //adjust the website width based on it current Screen width
-function adjustScreenWidth() {
+const adjustScreenWidth = () => {
     let windowWidth = window.innerWidth;
     let body = document.querySelector("body");
-    body.style.width = windowWidth + "px";
+    body.style.width = `${windowWidth}px`;
 }
 
 //api request for fetching movies
